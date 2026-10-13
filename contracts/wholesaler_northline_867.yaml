@@ -1,0 +1,29 @@
+name: wholesaler_northline_867
+version: 1
+owner: sales-squad
+description: Northline weekly 867 sell-out file (cartons, NDC-11).
+landing_path: wholesaler/northline/867/
+file_pattern: 'NL_867_*.csv'
+format: csv
+delimiter: ","
+encoding: utf-8
+header: true
+allow_empty: false
+allow_new_columns: false
+primary_key: [dc_id, invoice_no, ndc11, cust_hin]
+business_date_column: report_week_end
+arrival: weekly on Monday
+control_file: true
+control_qty_column: qty
+columns:
+  - {name: report_week_end, type: date, format: yyyy-MM-dd, required: true}
+  - {name: dc_id, type: string, required: true}
+  - {name: ndc11, type: string, required: true, pattern: '^[0-9]{11}$'}
+  - {name: cust_hin, type: string, required: true, pattern: '^[A-Z0-9]{9}$'}
+  - {name: cust_name, type: string, required: true}
+  - {name: cust_zip, type: string, required: true, pattern: '^[0-9]{5}$'}
+  - {name: qty, type: integer, required: true}
+  - {name: uom, type: string, required: true, allowed: [CT]}
+  - {name: contract_id, type: string, required: false}
+  - {name: invoice_no, type: string, required: true}
+  - {name: invoice_date, type: date, format: yyyy-MM-dd, required: true}

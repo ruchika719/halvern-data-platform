@@ -1,0 +1,38 @@
+name: wholesaler_pacifica_867
+version: 1
+owner: sales-squad
+description: Pacifica weekly 867 sell-out file, fixed width, no header (eaches, NDC-10 with dashes).
+landing_path: wholesaler/pacifica/867/
+file_pattern: 'PHS867_*.dat'
+format: fixed_width
+encoding: utf-8
+record_length: 55
+allow_empty: false
+allow_new_columns: false
+primary_key: [week_end, dc, ndc10, customer_no]
+business_date_column: week_end
+arrival: weekly on Tuesday
+control_file: true
+control_qty_column: quantity
+control_qty_sign_column: sign
+# 1-based, inclusive. Values are trimmed of padding spaces.
+positions:
+  - {name: sender, start: 1, end: 3}
+  - {name: week_end, start: 4, end: 11}
+  - {name: dc, start: 12, end: 14}
+  - {name: ndc10, start: 15, end: 27}
+  - {name: quantity, start: 28, end: 35}
+  - {name: unit, start: 36, end: 37}
+  - {name: customer_no, start: 38, end: 45}
+  - {name: dea_no, start: 46, end: 54}
+  - {name: sign, start: 55, end: 55}
+columns:
+  - {name: sender, type: string, required: true, allowed: [PHS]}
+  - {name: week_end, type: sap_date, required: true}
+  - {name: dc, type: string, required: true}
+  - {name: ndc10, type: string, required: true, pattern: '^([0-9]{4}-[0-9]{4}-[0-9]{2}|[0-9]{5}-[0-9]{3}-[0-9]{2}|[0-9]{5}-[0-9]{4}-[0-9])$'}
+  - {name: quantity, type: integer, required: true, pattern: '^[0-9]{8}$'}
+  - {name: unit, type: string, required: true, allowed: [EA]}
+  - {name: customer_no, type: string, required: true}
+  - {name: dea_no, type: string, required: false, pattern: '^[A-Z]{2}[0-9]{7}$'}
+  - {name: sign, type: string, required: false, allowed: ["", "-"]}

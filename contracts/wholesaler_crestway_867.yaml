@@ -1,0 +1,26 @@
+name: wholesaler_crestway_867
+version: 1
+owner: sales-squad
+description: Crestway weekly 867 sell-out file, semicolon-separated (cases of 10, Crestway item numbers).
+landing_path: wholesaler/crestway/867/
+file_pattern: 'CW_SALES_*.csv'
+format: csv
+delimiter: ";"
+encoding: utf-8
+header: true
+allow_empty: false
+allow_new_columns: false
+primary_key: [WEEK_END, DC, CW_ITEM, CUSTOMER, ZIP]
+business_date_column: WEEK_END
+arrival: weekly, Wednesday to Friday (2-3 days late)
+control_file: true
+control_qty_column: QTY_CS
+columns:
+  - {name: WEEK_END, type: date, format: MM/dd/yyyy, required: true, pattern: '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'}
+  - {name: DC, type: string, required: true}
+  - {name: CW_ITEM, type: string, required: true}
+  # Some customer names arrive as CONFIDENTIAL.
+  - {name: CUSTOMER, type: string, required: true}
+  - {name: ZIP, type: string, required: true, pattern: '^[0-9]{5}$'}
+  - {name: QTY_CS, type: integer, required: true}
+  - {name: EXT_COST, type: 'decimal(18,2)', required: true}

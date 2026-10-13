@@ -1,0 +1,33 @@
+name: sap_vbrp
+version: 1
+owner: sales-squad
+description: Billing document items (SAP VBRP).
+source_system: [PS4, JE1]
+landing_path: sap/{source_system}/VBRP/
+format: parquet
+allow_empty: false
+allow_new_columns: true
+primary_key: [VBELN, POSNR]
+change_mode_column: _op
+order_columns: [_change_ts, _seq]
+arrival: daily by 01:30 UTC
+columns:
+  - {name: VBELN, type: string, required: true, pattern: '^[0-9]{10}$'}
+  - {name: POSNR, type: string, required: true, pattern: '^[0-9]{6}$'}
+  - {name: MATNR, type: string, required: true, pattern: '^[0-9]{18}$'}
+  - {name: CHARG, type: string, required: false}
+  # Always positive; the sign comes from the header FKART.
+  - {name: FKIMG, type: 'decimal(13,3)', required: true, min: 0}
+  - {name: VRKME, type: string, required: true}
+  - {name: NETWR, type: 'decimal(15,2)', required: true, min: 0}
+  - {name: WAVWR, type: 'decimal(15,2)', required: false, min: 0}
+  - {name: PRCTR, type: string, required: false}
+  - {name: WERKS, type: string, required: true, pattern: '^[A-Z0-9]{4}$'}
+  - {name: AUBEL, type: string, required: false, pattern: '^([0-9]{10})?$'}
+  - {name: VGBEL, type: string, required: false, pattern: '^([0-9]{10})?$'}
+  # Technical columns added by the replication layer.
+  - {name: _op, type: string, required: true, allowed: [I, U, D]}
+  - {name: _change_ts, type: timestamp, required: true}
+  - {name: _seq, type: integer, required: true, min: 0}
+  - {name: _extract_id, type: string, required: true}
+  - {name: _source_system, type: string, required: true, allowed: [PS4, JE1]}

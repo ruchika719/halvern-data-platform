@@ -1,0 +1,23 @@
+name: reference_wholesaler_item_xref
+version: 1
+owner: sales-squad
+description: Wholesaler item cross-reference; a full file on each change.
+landing_path: reference/wholesaler_item_xref/
+file_pattern: 'xref_*.csv'
+format: csv
+delimiter: ","
+encoding: utf-8
+header: true
+allow_empty: false
+allow_new_columns: false
+primary_key: [wholesaler, wholesaler_item, valid_from]
+arrival: on change
+control_file: false
+columns:
+  - {name: wholesaler, type: string, required: true, allowed: [northline, pacifica, crestway]}
+  - {name: wholesaler_item, type: string, required: true}
+  - {name: ndc11, type: string, required: true, pattern: '^[0-9]{11}$'}
+  - {name: halvern_item, type: string, required: true, pattern: '^[0-9]{18}$'}
+  - {name: valid_from, type: date, format: yyyy-MM-dd, required: true}
+  # Open-ended mappings use 9999-12-31.
+  - {name: valid_to, type: date, format: yyyy-MM-dd, required: true}

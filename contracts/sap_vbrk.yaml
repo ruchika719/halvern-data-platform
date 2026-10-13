@@ -1,0 +1,37 @@
+name: sap_vbrk
+version: 1
+owner: sales-squad
+description: Billing document header (SAP VBRK).
+source_system: [PS4, JE1]
+landing_path: sap/{source_system}/VBRK/
+format: parquet
+allow_empty: false
+allow_new_columns: true
+primary_key: [VBELN]
+change_mode_column: _op
+order_columns: [_change_ts, _seq]
+business_date_column: FKDAT
+arrival: daily by 01:30 UTC
+columns:
+  - {name: VBELN, type: string, required: true, pattern: '^[0-9]{10}$'}
+  - {name: FKART, type: string, required: true, allowed: [F2, L2, G2, RE, S1, IV]}
+  - {name: FKDAT, type: sap_date, required: true}
+  - {name: BUKRS, type: string, required: true, pattern: '^[0-9]{4}$'}
+  - {name: VKORG, type: string, required: true, pattern: '^[0-9]{4}$'}
+  - {name: VTWEG, type: string, required: true, pattern: '^[0-9]{2}$'}
+  - {name: SPART, type: string, required: true, pattern: '^[0-9]{2}$'}
+  - {name: KUNAG, type: string, required: true, pattern: '^[0-9]{10}$'}
+  - {name: KUNRG, type: string, required: true, pattern: '^[0-9]{10}$'}
+  - {name: WAERK, type: string, required: true, pattern: '^[A-Z]{3}$'}
+  # Always positive; the sign comes from FKART.
+  - {name: NETWR, type: 'decimal(15,2)', required: true, min: 0}
+  - {name: FKSTO, type: string, required: false, allowed: ["", X]}
+  - {name: SFAKN, type: string, required: false, pattern: '^([0-9]{10})?$'}
+  - {name: RFBSK, type: string, required: true, allowed: [A, B, C]}
+  - {name: ERDAT, type: sap_date, required: true}
+  # Technical columns added by the replication layer.
+  - {name: _op, type: string, required: true, allowed: [I, U, D]}
+  - {name: _change_ts, type: timestamp, required: true}
+  - {name: _seq, type: integer, required: true, min: 0}
+  - {name: _extract_id, type: string, required: true}
+  - {name: _source_system, type: string, required: true, allowed: [PS4, JE1]}

@@ -1,0 +1,23 @@
+name: sap_makt
+version: 1
+owner: product-squad
+description: Item texts per language (SAP MAKT).
+source_system: [PS4]
+landing_path: sap/{source_system}/MAKT/
+format: parquet
+allow_empty: true
+allow_new_columns: false
+primary_key: [MATNR, SPRAS]
+change_mode_column: _op
+order_columns: [_change_ts, _seq]
+arrival: daily by 01:30 UTC
+columns:
+  - {name: MATNR, type: string, required: true, pattern: '^[0-9]{18}$'}
+  - {name: SPRAS, type: string, required: true, pattern: '^[A-Z0-9]$'}
+  - {name: MAKTX, type: string, required: true}
+  # Technical columns added by the replication layer.
+  - {name: _op, type: string, required: true, allowed: [I, U, D]}
+  - {name: _change_ts, type: timestamp, required: true}
+  - {name: _seq, type: integer, required: true, min: 0}
+  - {name: _extract_id, type: string, required: true}
+  - {name: _source_system, type: string, required: true, allowed: [PS4]}
