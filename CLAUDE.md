@@ -13,6 +13,8 @@
 - No Python or pandas UDFs unless the owner approves them.
 - Use built-in PySpark functions or Spark SQL.
 - Helper functions must return Spark Column expressions or DataFrame transformations.
+- Exception: file-level helpers in plain Python are allowed, such as `file_fingerprint`. They run
+  once per file, not once per row, so they are not UDFs.
 
 ## After each PR
 

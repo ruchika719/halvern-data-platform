@@ -12,11 +12,20 @@ ROW_HASH_SEPARATOR = "\u001f"
 ROW_HASH_NULL = "\u0000"
 
 
+def cast_seq(df: DataFrame, seq_col: str = "_seq") -> DataFrame:
+    """Cast the SAP extract sequence column from text to ``long``.
+
+    Run this before ``dedupe_latest``: as text, ``"10"`` sorts before ``"9"``. Values that are not
+    whole numbers become null.
+    """
+    return df.withColumn(seq_col, F.expr(f"try_cast(`{seq_col}` AS BIGINT)"))
+
+
 def dedupe_latest(df: DataFrame, keys: Sequence[str], order_cols: Sequence[str]) -> DataFrame:
     """Keep one row per key: the row with the highest ``order_cols``, compared left to right.
 
     Rows with a null in any key column are dropped. Order columns must already have their real
-    types (for example ``_seq`` as an integer), because text sorts ``"10"`` before ``"9"``.
+    types: use ``cast_seq`` on ``_seq`` first, because text sorts ``"10"`` before ``"9"``.
     """
     if not keys or not order_cols:
         raise ValueError("keys and order_cols must not be empty")

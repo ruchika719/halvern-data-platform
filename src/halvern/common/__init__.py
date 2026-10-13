@@ -1,7 +1,7 @@
 """Pure helper functions shared across the platform (spec 01, section 7)."""
 
 from halvern.common.files import file_fingerprint
-from halvern.common.frames import dedupe_latest, row_hash
+from halvern.common.frames import cast_seq, dedupe_latest, row_hash
 from halvern.common.ndc import ndc10_to_ndc11
 from halvern.common.sap import (
     BILLING_SIGNS,
@@ -16,6 +16,7 @@ from halvern.common.sap import (
 __all__ = [
     "BILLING_SIGNS",
     "billing_sign",
+    "cast_seq",
     "currency_shift",
     "dedupe_latest",
     "file_fingerprint",

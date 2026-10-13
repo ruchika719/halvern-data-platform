@@ -3,7 +3,7 @@
 import pytest
 from chispa import assert_df_equality
 
-from halvern.common import dedupe_latest, row_hash
+from halvern.common import cast_seq, dedupe_latest, row_hash
 
 pytestmark = pytest.mark.unit
 
@@ -29,6 +29,30 @@ def test_dedupe_latest_keeps_highest_order(spark):
         df.schema,
     )
     assert_df_equality(result, expected, ignore_row_order=True)
+
+
+def test_seq_as_text_keeps_the_wrong_row(spark):
+    # The trap cast_seq exists for: as text, "9" sorts above "10".
+    df = spark.createDataFrame(
+        [("A", "9", "older"), ("A", "10", "newer")], "k string, _seq string, v string"
+    )
+    assert dedupe_latest(df, ["k"], ["_seq"]).first().v == "older"
+
+
+def test_cast_seq_then_dedupe_keeps_seq_10_over_9(spark):
+    df = spark.createDataFrame(
+        [("A", "9", "older"), ("A", "10", "newer")], "k string, _seq string, v string"
+    )
+    typed = cast_seq(df)
+    assert dict(typed.dtypes)["_seq"] == "bigint"
+    result = dedupe_latest(typed, ["k"], ["_seq"]).collect()
+    assert [(r.v, r._seq) for r in result] == [("newer", 10)]
+
+
+def test_cast_seq_bad_values_become_null(spark):
+    df = spark.createDataFrame([("x1", "12"), ("x2", "N/A"), ("x3", None)], "id string, s string")
+    out = cast_seq(df, seq_col="s").orderBy("id").collect()
+    assert [r.s for r in out] == [12, None, None]
 
 
 def test_dedupe_latest_excludes_null_keys_and_uses_composite_keys(spark):
