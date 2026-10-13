@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halvern-data-platform"
+version = "0.1.0"
+description = "Halvern Data Platform: pharma sales, inventory and P&L lakehouse"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pyspark==3.5.*",
+    "pyyaml>=6.0",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "chispa>=0.10",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+halvern-gen = "halvern_gen.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src", "generator"]
+include = ["halvern*", "halvern_gen*"]
+
+[tool.setuptools.package-data]
+halvern_gen = ["profiles/*.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["halvern", "halvern_gen"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "generator"]
+addopts = "-ra --strict-markers"
+markers = [
+    "unit: pure function tests",
+    "contract: data contract loader and validator tests",
+    "generator: data generator tests",
+    "integration: slower end-to-end tests (skipped in CI for now)",
+]
+
+[tool.coverage.run]
+branch = true

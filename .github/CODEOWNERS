@@ -1,0 +1,6 @@
+# The owner reviews everything.
+*                       @ruchika719
+
+# Shared code: called out explicitly because it will need extra review later.
+/contracts/             @ruchika719
+/src/halvern/common/    @ruchika719
