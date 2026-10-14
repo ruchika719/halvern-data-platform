@@ -36,7 +36,8 @@ You can also set it up by hand with `python3.12 -m venv .venv` and
 
 ## Running checks
 
-These are the same checks CI runs:
+In Databricks, run the notebook `tools/run_checks` on your branch. Locally, these are the
+same checks CI runs:
 
 ```bash
 ruff check .
@@ -52,13 +53,17 @@ integration tests for now and fails if coverage drops below 70%.
 The `halvern-gen` generator is added in HDP-4. Usage docs and the mess profiles
 (`clean`, `realistic`, `chaos`) are documented in HDP-5.
 
-## Branching and pull requests
+## Branching
 
-- Trunk-based: `main` is always releasable.
-- Branches are short-lived and named `feature/HDP-<n>-<short-desc>`, `fix/HDP-<n>-...` or
-  `chore/HDP-<n>-...`.
+GitFlow-style, worked from Databricks Git folders. Full rules:
+[`docs/standards/git-workflow.md`](docs/standards/git-workflow.md).
+
+- `main` is production; every merge comes from a `release/X.Y.Z` branch through a pull request
+  and is tagged `vX.Y.Z`.
+- `develop` collects finished work and is always runnable.
+- One ticket per branch from `develop`: `feature/HDP-<n>-<short-desc>`, `bugfix/HDP-<n>-...` or
+  `chore/HDP-<n>-...`. Developers merge into `develop` from Databricks after `tools/run_checks`
+  and the ticket's validation pass.
 - Commit messages start with the ticket key, for example `HDP-2: add sap_date helper and tests`.
 - GitHub Issues titled `HDP-<n>` act as tickets.
-- PRs use the template in `.github/pull_request_template.md`. They squash-merge only,
-  and the branch is deleted after merge.
-- CI jobs `lint` and `test` must pass before merging.
+- CI runs `lint` and `test` on every push.

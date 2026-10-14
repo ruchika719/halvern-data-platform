@@ -1,16 +1,19 @@
 name: CI
 
+# Developers push feature branches from their Databricks Git folders, so every push runs CI
+# and GitHub emails the pusher when it fails. Pull requests into the protected branches run it
+# again on the merge result. Throwaway exp/ branches are skipped.
 on:
-  pull_request:
-    branches: [main]
   push:
-    branches: [main]
+    branches-ignore: ["exp/**"]
+  pull_request:
+    branches: [main, develop, "release/**"]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,7 +24,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install ruff
+      # Same version as requirements-dev.txt and tools/run_checks, so results match everywhere.
+      - run: pip install ruff==0.17.0
       - run: ruff check .
       - run: ruff format --check .
 
